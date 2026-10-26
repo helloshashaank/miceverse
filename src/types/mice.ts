@@ -104,9 +104,123 @@ export interface VenueZone {
   avSetup?: string;
 }
 
+// -------------------------------------------------------------
+// B2B Corporate Agency & Client Management Extensions
+// -------------------------------------------------------------
+
+export interface CorporateClient {
+  id: string;
+  companyName: string;
+  legalEntityName: string;
+  industry: string;
+  gstin: string;
+  pan: string;
+  headOfficeCity: string;
+  travelDeskLeadName: string;
+  travelDeskEmail: string;
+  travelDeskPhone: string;
+  contractType: 'master_services_agreement' | 'retainer' | 'project_based';
+  creditTerms: '30_days_net' | 'advance_milestone' | 'immediate';
+  lifetimeSpend: number;
+  activeTripsCount: number;
+  totalDelegatesTravelled: number;
+  status: 'active' | 'under_review' | 'archived';
+  notes?: string;
+}
+
+export interface CorporatePerson {
+  id: string;
+  corporateId: string;
+  fullName: string;
+  designation: string;
+  department: string;
+  email: string;
+  phone: string;
+  vipGrade: 'c_suite' | 'vp_director' | 'manager' | 'delegate';
+  passportNumber?: string;
+  passportExpiry?: string;
+  aadhaarMasked?: string;
+  dietaryPreference: 'Vegetarian' | 'Non-Vegetarian' | 'Jain' | 'Vegan' | 'Gluten-Free';
+  frequentFlyerNo?: string;
+  homeCity: string;
+  isKycComplete: boolean;
+  assignedTripIds: string[];
+}
+
+export interface TripAgreementClause {
+  id: string;
+  title: string;
+  content: string;
+}
+
+export interface TripAgreement {
+  id: string;
+  eventId: string;
+  eventTitle: string;
+  corporateClientId: string;
+  corporateClientName: string;
+  title: string;
+  agreementType: 'mou' | 'msa' | 'trip_contract';
+  version: string;
+  status: 'draft' | 'pending_approval' | 'acknowledged' | 'signed';
+  effectiveDate: string;
+  executionDate?: string;
+  scopeOfWorkSummary: string;
+  paymentTermsSummary: string;
+  cancellationClause: string;
+  forceMajeureClause: string;
+  clauses: TripAgreementClause[];
+  agencySignatory: {
+    name: string;
+    title: string;
+    signedAt: string;
+  };
+  clientSignatory?: {
+    name: string;
+    title: string;
+    email: string;
+    signedAt?: string;
+    ipAddress?: string;
+    verificationHash?: string;
+  };
+  acknowledgedInPortal: boolean;
+  acknowledgedAt?: string;
+}
+
+export interface PaymentRecord {
+  id: string;
+  eventId: string;
+  milestoneId: string;
+  milestoneName: string;
+  amount: number;
+  currency: string;
+  paymentMethod: 'rtgs_neft' | 'corporate_card' | 'bank_transfer' | 'cheque';
+  transactionReference: string;
+  paymentDate: string;
+  recordedBy: string;
+  receiptNumber: string;
+  status: 'completed' | 'pending_clearance';
+  notes?: string;
+}
+
+export interface PaymentReminderLog {
+  id: string;
+  eventId: string;
+  milestoneId: string;
+  channel: 'whatsapp' | 'email' | 'both';
+  recipientName: string;
+  recipientEmail: string;
+  recipientPhone: string;
+  sentAt: string;
+  amountDue: number;
+  dueDate: string;
+  status: 'delivered' | 'read' | 'failed';
+}
+
 export interface MiceEvent {
   id: string;
   name: string;
+  corporateClientId?: string;
   clientName: string;
   clientContact: string;
   destination: string;

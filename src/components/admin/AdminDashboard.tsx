@@ -12,9 +12,11 @@ import {
   Plane, 
   CheckCircle2, 
   Sparkles,
-  Map 
+  Map,
+  FileCheck2,
+  CreditCard 
 } from 'lucide-react';
-import { MiceEvent } from '../../types/mice';
+import { MiceEvent, TripAgreement, PaymentRecord, PaymentReminderLog } from '../../types/mice';
 import { ProposalView } from './ProposalView';
 import { PredictiveBudgetView } from './PredictiveBudgetView';
 import { ItineraryBuilderView } from './ItineraryBuilderView';
@@ -22,16 +24,27 @@ import { RsvpManifestView } from './RsvpManifestView';
 import { DocumentVaultView } from './DocumentVaultView';
 import { PushBroadcastView } from './PushBroadcastView';
 import { VenueMapView } from './VenueMapView';
+import { AgreementMouView } from './AgreementMouView';
+import { PaymentsBillingView } from './PaymentsBillingView';
 
 interface AdminDashboardProps {
   events: MiceEvent[];
   selectedEvent: MiceEvent;
   onSelectEvent: (eventId: string) => void;
   onUpdateEvent: (updated: MiceEvent) => void;
+  agreements: TripAgreement[];
+  onUpdateAgreement: (updated: TripAgreement) => void;
+  onAddAgreement: (newAgr: TripAgreement) => void;
+  payments: PaymentRecord[];
+  reminders: PaymentReminderLog[];
+  onAddPayment: (newPayment: PaymentRecord) => void;
+  onSendReminder: (newReminder: PaymentReminderLog) => void;
 }
 
 export type AdminTab = 
   | 'proposals' 
+  | 'agreement'
+  | 'payments'
   | 'budget' 
   | 'itinerary' 
   | 'rsvp' 
@@ -43,7 +56,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   events,
   selectedEvent,
   onSelectEvent,
-  onUpdateEvent
+  onUpdateEvent,
+  agreements,
+  onUpdateAgreement,
+  onAddAgreement,
+  payments,
+  reminders,
+  onAddPayment,
+  onSendReminder
 }) => {
   const [activeTab, setActiveTab] = useState<AdminTab>('proposals');
 
@@ -51,6 +71,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const confirmedRsvps = selectedEvent.attendees.filter(a => a.rsvpStatus === 'confirmed').length;
   const verifiedDocs = selectedEvent.attendees.filter(a => a.docStatus === 'verified').length;
   const checkInCount = selectedEvent.attendees.filter(a => a.checkedIn).length;
+  const activeEventPayments = payments.filter(p => p.eventId === selectedEvent.id);
+  const totalPaid = activeEventPayments.reduce((acc, p) => acc + p.amount, 0);
 
   return (
     <div className="space-y-8">
@@ -138,8 +160,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="text-xl font-bold font-mono text-white mt-0.5 tabular-nums">
                 {selectedEvent.currency} {(selectedEvent.budgetTotal).toLocaleString()}
               </div>
-              <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
-                {selectedEvent.currency} {selectedEvent.budgetPerPax.toLocaleString()} / pax
+              <span className="text-[11px] text-emerald-400 font-mono mt-0.5 block">
+                Paid: {selectedEvent.currency} {totalPaid.toLocaleString()}
               </span>
             </div>
 
@@ -177,7 +199,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           }`}
         >
           <FileText className="w-3.5 h-3.5" />
-          Proposals & Inclusions
+          Proposals & Templates
+        </button>
+
+        <button
+          onClick={() => setActiveTab('agreement')}
+          className={`flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap cursor-pointer ${
+            activeTab === 'agreement'
+              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+              : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+          }`}
+        >
+          <FileCheck2 className="w-3.5 h-3.5" />
+          Agreements & MoU
+        </button>
+
+        <button
+          onClick={() => setActiveTab('payments')}
+          className={`flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap cursor-pointer ${
+            activeTab === 'payments'
+              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+              : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+          }`}
+        >
+          <CreditCard className="w-3.5 h-3.5" />
+          Payments & Partial Terms
         </button>
 
         <button
@@ -257,6 +303,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div>
         {activeTab === 'proposals' && (
           <ProposalView event={selectedEvent} onUpdateEvent={onUpdateEvent} />
+        )}
+        {activeTab === 'agreement' && (
+          <AgreementMouView
+            agreements={agreements}
+            events={events}
+            selectedEvent={selectedEvent}
+            onUpdateAgreement={onUpdateAgreement}
+            onAddAgreement={onAddAgreement}
+          />
+        )}
+        {activeTab === 'payments' && (
+          <PaymentsBillingView
+            event={selectedEvent}
+            payments={payments}
+            reminders={reminders}
+            onAddPayment={onAddPayment}
+            onSendReminder={onSendReminder}
+          />
         )}
         {activeTab === 'budget' && (
           <PredictiveBudgetView event={selectedEvent} onUpdateEvent={onUpdateEvent} />

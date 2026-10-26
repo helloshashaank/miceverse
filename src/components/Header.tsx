@@ -2,8 +2,8 @@ import React from 'react';
 import { Compass, Sparkles, Plus, WifiOff, ShieldCheck } from 'lucide-react';
 
 interface HeaderProps {
-  currentTab: 'admin' | 'attendee' | 'blueprint';
-  onSelectTab: (tab: 'admin' | 'attendee' | 'blueprint') => void;
+  currentTab: 'admin' | 'corporates' | 'attendee' | 'blueprint';
+  onSelectTab: (tab: 'admin' | 'corporates' | 'attendee' | 'blueprint') => void;
   onOpenNewEvent: () => void;
   isOfflineMode: boolean;
 }
@@ -49,7 +49,18 @@ export const Header: React.FC<HeaderProps> = ({
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            MICE Admin Hub
+            MICE Projects
+          </button>
+
+          <button
+            onClick={() => onSelectTab('corporates')}
+            className={`whitespace-nowrap shrink-0 transition-colors py-1 cursor-pointer ${
+              currentTab === 'corporates'
+                ? 'text-cyan-400 font-semibold border-b-2 border-cyan-400'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Corporate Accounts
           </button>
 
           <button
@@ -71,7 +82,7 @@ export const Header: React.FC<HeaderProps> = ({
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            System & Feature Specs
+            System Specs
           </button>
         </nav>
 
