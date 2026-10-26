@@ -1,0 +1,8 @@
+{
+  "name": "MICEverse - Corporate Travel & Event Management Platform",
+  "description": "Futuristic MICE management platform for corporate travel, proposals, automated itineraries, predictive budgeting, attendee document vaults, and live logistics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
